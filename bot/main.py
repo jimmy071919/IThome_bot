@@ -6,8 +6,17 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 import os
 from dotenv import load_dotenv
+import pytz
 
 load_dotenv()
+
+# 明確設置時區
+os.environ['TZ'] = 'Asia/Taipei'
+try:
+    import time
+    time.tzset()  # 在系統層面設置時區
+except AttributeError:
+    pass  # Windows 不支持 tzset
 
 LINE_ACCESS_TOKEN = os.getenv("LINE_ACCESS_TOKEN")
 LINE_USER_ID = os.getenv("LINE_USER_ID")
@@ -33,10 +42,10 @@ def send_IT_message():
         send_message(news)
     print("Done!")
 
-program_scheduler = BlockingScheduler(timezone='Asia/Taipei')
+program_scheduler = BlockingScheduler(timezone=pytz.timezone('Asia/Taipei'))
 
-# 使用 CronTrigger 每天中午12點整執行
-program_trigger = CronTrigger(hour=13, minute=0)
+# 使用 CronTrigger 每天下午1點整執行
+program_trigger = CronTrigger(hour=13, minute=0, timezone=pytz.timezone('Asia/Taipei'))
 
 program_scheduler.add_job(send_IT_message, trigger=program_trigger)
 
