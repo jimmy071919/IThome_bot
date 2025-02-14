@@ -45,7 +45,7 @@ def send_IT_message():
 program_scheduler = BlockingScheduler(timezone=pytz.timezone('Asia/Taipei'))
 
 # 使用 CronTrigger 每天下午1點整執行
-program_trigger = CronTrigger(hour=13, minute=10, timezone=pytz.timezone('Asia/Taipei'))
+program_trigger = CronTrigger(hour=13, minute=15, timezone=pytz.timezone('Asia/Taipei'))
 
 program_scheduler.add_job(send_IT_message, trigger=program_trigger)
 
