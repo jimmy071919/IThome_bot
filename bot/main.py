@@ -1,6 +1,6 @@
 from linebot import LineBotApi
 from linebot.models import TextSendMessage
-from crawler.crawler import IThome_crawler
+from crawler import IThome_crawler
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 import os
