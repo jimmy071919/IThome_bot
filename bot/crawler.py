@@ -10,9 +10,28 @@ def IThome_crawler():
     response.encoding = 'utf-8'
     html = etree.HTML(response.text)
     news = html.xpath('//*[@id="block-views-latest-news-block-3"]/div/div[1]/div/div/span/div/p[3]/a/@href')
-    news_list = [f"https://www.ithome.com.tw/{new}" for new in news[0:5]]
-    return news_list
+    news_list = [f"https://www.ithome.com.tw/{new}" for new in news[0:15]]
     
-
-if __name__ == "__main__"  :
-    print(IThome_crawler())
+    # 讀取歷史記錄
+    try:
+        with open("crawler_history.txt", "r", encoding="utf-8") as f:
+            history = [line.strip() for line in f.readlines()]
+    except FileNotFoundError:
+        history = []
+    
+    # 比較差異
+    new_articles = [url for url in news_list if url not in history]
+    if new_articles:
+        print("新文章：")
+        for article in new_articles:
+            print(article)
+    
+    # 更新歷史記錄
+    with open("crawler_history.txt", "w", encoding="utf-8") as f:
+        for url in news_list:
+            f.write(url + "\n")
+    
+    return new_articles
+    
+if __name__ == "__main__":
+    IThome_crawler()

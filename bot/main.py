@@ -37,15 +37,19 @@ def send_message(message):
 
 def send_IT_message():
     news_list = IThome_crawler()
-    send_message("上午好! 今日的最新5則時事🐶")
-    for news in news_list:
-        send_message(news)
-    print("Done!")
+
+    if news_list:
+        send_message(f"上午好! 今日的最新{len(news_list)}則時事🐶")
+        for news in news_list:
+            send_message(news)
+        print("Done!")
+    else:
+        send_message("上午好! 今天沒有新文章🐶")
 
 program_scheduler = BlockingScheduler(timezone=pytz.timezone('Asia/Taipei'))
 
 # 使用 CronTrigger 每天下午1點整執行
-program_trigger = CronTrigger(hour=13, minute=15, timezone=pytz.timezone('Asia/Taipei'))
+program_trigger = CronTrigger(hour=9, minute=0, timezone=pytz.timezone('Asia/Taipei'))
 
 program_scheduler.add_job(send_IT_message, trigger=program_trigger)
 
@@ -56,3 +60,7 @@ except (KeyboardInterrupt, SystemExit):
     # 當程式被中斷時
     program_scheduler.shutdown()
     # 結束排程
+
+
+if __name__ == "__main__":
+    send_IT_message()
