@@ -65,15 +65,15 @@ def send_IT_message():
         print("無法生成摘要")
 
 
-# 建立 BackgroundScheduler 以不阻塞主程式
-program_scheduler = BackgroundScheduler(timezone=pytz.timezone('Asia/Taipei'))
+# # 建立 BackgroundScheduler 以不阻塞主程式
+# program_scheduler = BackgroundScheduler(timezone=pytz.timezone('Asia/Taipei'))
 
-# 設定排程時間（每天早上 9 點執行）
-program_trigger = CronTrigger(hour=9, minute=0, timezone=pytz.timezone('Asia/Taipei'))
-program_scheduler.add_job(send_IT_message, trigger=program_trigger)
+# # 設定排程時間（每天早上 9 點執行）
+# program_trigger = CronTrigger(hour=9, minute=0, timezone=pytz.timezone('Asia/Taipei'))
+# program_scheduler.add_job(send_IT_message, trigger=program_trigger)
 
-# 啟動排程
-program_scheduler.start()
+# # 啟動排程
+# program_scheduler.start()
 
 if __name__ == "__main__":
     send_IT_message()
