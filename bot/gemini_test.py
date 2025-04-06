@@ -1,5 +1,6 @@
 import google.generativeai as genai
 import os
+import notion_use
 from dotenv import load_dotenv
 
 # 載入環境變數
@@ -16,9 +17,26 @@ def get_gemini_response(content):
         model = genai.GenerativeModel("gemini-2.0-flash")  
         
         # 設定 AI 角色與目標
-        system_prompt = f"""你是一個專業的AI助理。你的主要職責是將我給你的每日新資訊進行總結，內容如下：
+        system_prompt = f"""你是一個專業的 AI 助理，負責每天將使用者提供的資訊進行快速、準確的總結。請用繁體中文回答，內容需簡潔明瞭、易於理解。請依據以下規則整理內容：
+
+        1. 嚴格使用 markdown 以及格式化符號。
+
+        2. 每篇文章之間以標題作為區隔。
+
+        3. 詳細的陳述所有資訊，並進行總結。
+
+        4. 僅提供資訊總結，不加入額外背景或評論。
+
+        5. 回覆中只呈現總結結果，不包含其他說明或提示。
+
+        6. 目標是幫助使用者快速掌握每日新資訊的重點內容。請保持語句流暢、表達清楚。
+
+        7. 自述盡量在 2000 字以內
+        
+        以下為你需要總結的內容
         {content}
-        並給予我清晰的每日新資訊報告。""" 
+        
+        """ 
         
         # 建立對話
         chat = model.start_chat(history=[])
@@ -37,6 +55,10 @@ def gen_summary():
             content = f.read().strip()  # 讀取全部內容並去掉首尾空白
         if content:
             summary = get_gemini_response(content)
+
+            with open("content_history.md", "a", encoding="utf-8") as history_file:
+                history_file.write(summary)
+
             return summary
         else:
             print("⚠️ content.txt 是空的，無法生成摘要")
@@ -45,4 +67,5 @@ def gen_summary():
 
 
 if __name__ == "__main__":
-    gen_summary()
+    x = gen_summary()
+    print(x)

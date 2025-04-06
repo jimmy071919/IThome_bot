@@ -11,7 +11,7 @@ def IThome_crawler():
     response.encoding = 'utf-8'
     html = etree.HTML(response.text)
     news = html.xpath('//*[@id="block-views-latest-news-block-3"]/div/div[1]/div/div/span/div/p[3]/a/@href')
-    news_list = [f"https://www.ithome.com.tw/{new}" for new in news[0:15]]
+    news_list = [f"https://www.ithome.com.tw/{new}" for new in news[0:30]] # 取前 30 筆
     
     # 讀取歷史記錄
     try:
