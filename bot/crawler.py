@@ -10,8 +10,8 @@ def IThome_crawler():
     response = requests.get(url=url , headers=headers)
     response.encoding = 'utf-8'
     html = etree.HTML(response.text)
-    news = html.xpath('//*[@id="block-views-latest-news-block-3"]/div/div[1]/div/div/span/div/p[3]/a/@href')
-    news_list = [f"https://www.ithome.com.tw/{new}" for new in news[0:30]] # 取前 30 筆
+    news = html.xpath('//*[@id="block-views-latest-news-block-3"]//p[1]/a/@href')
+    news_list = [f"https://www.ithome.com.tw/{new}" for new in news[0:15]] # 取前 10 筆
     
     # 讀取歷史記錄
     try:
