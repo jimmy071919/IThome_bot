@@ -16,7 +16,7 @@ def get_gemini_response(content):
         model = genai.GenerativeModel("gemini-2.0-flash")  
         
         # 設定 AI 角色與目標
-        system_prompt = f"""你是一個專業的 AI 助理，負責每天將使用者提供的資訊進行快速、準確的總結。請用繁體中文回答，內容需簡潔明瞭、易於理解。請依據以下規則整理內容：
+        system_prompt = f"""你是一個專業的助理，負責每天將使用者提供的資訊進行快速、準確的總結。請用繁體中文回答，內容需簡潔明瞭、易於理解。請依據以下規則整理內容：
 
         1. 嚴格使用 markdown 以及格式化符號。
 

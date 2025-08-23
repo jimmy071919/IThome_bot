@@ -212,3 +212,61 @@ NGINX 原生支援 ACME (Automatic Certificate Management Environment) 協定，
 *   **FortiSIEM 漏洞 CVE-2025-25256：** 資安廠商 Fortinet 發布公告，指出 FortiSIEM 存在高風險漏洞 CVE-2025-25256，而且已有實際的漏洞利用程式碼出現。
 *   **Nvidia Triton 推論伺服器漏洞：** Nvidia 發布 Triton 推論伺服器與 Python 後端安全更新，修補高風險漏洞，允許未經驗證的遠端攻擊者取得伺服器的遠端程式碼執行權限。
 *   **Windows 365 Reserve 服務：** 微軟公布 Windows 365 Reserve 服務，提供電腦故障的員工快速連上 Windows 雲端繼續作業。
+### Google搜尋AI模式擴展及新功能實驗
+
+*   Google將AI模式拓展至全球180多個國家，但目前僅支援英文。
+*   AI模式基於Gemini 2.5模型，支援深度搜尋、複雜查詢、多模態輸入及聊天互動。
+*   美國市場推出分享/協作功能，方便使用者共同編輯和討論AI模式的回應。
+*   美國推出代理功能，AI可替使用者執行複雜任務，如餐廳訂位。
+*   個人化功能利用使用者先前的對話紀錄和活動，提供個人化的搜尋結果，目前僅限美國市場的Labs實驗功能使用。
+
+### Mozilla Firefox 142 安全更新
+
+*   Mozilla發布Firefox 142，修復多項安全漏洞，包括5個高風險漏洞。
+*   高風險漏洞包括Audio/Video GMP元件的無效指標（CVE-2025-9179）、Canvas 2D元件的同源政策繞過（CVE-2025-9180）以及多個記憶體安全漏洞（CVE-2025-9184、CVE-2025-9185、CVE-2025-9187）。
+*   同時發布Firefox of iOS 142，修復一項高風險漏洞（CVE-2025-55030）及2個中度風險漏洞。
+
+### 資安威脅與漏洞警報
+
+*   駭客利用臉書粉絲頁版權爭議散布竊資軟體，手法更精進，借助AI翻譯並蒐集目標資訊。
+*   FBI警告俄羅斯駭客濫用Cisco Smart Install軟體7年前的漏洞CVE-2018-0171攻擊全球基礎架構。
+*   資安研究員發現Intel內部網站存在漏洞，可能導致27萬員工資料外洩，已完成修補。
+*   研究人員公布能透過Windows修復環境繞過BitLocker保護的漏洞BitUnlocker，微軟已發布修補程式。
+*   竊資軟體Noodlophile Stealer透過違反著作權網釣散布，針對亞太、歐美等地，利用Telegram作為C2。
+
+### Google安卓虛擬機管理程式pKVM獲SESIP 5級認證
+
+*   Google的安卓虛擬機管理程式pKVM取得SESIP 5級認證，為大規模消費性電子裝置部署的首例。
+*   此認證為關鍵性隔離工作負載建立更可驗證的安全基礎，涵蓋裝置上人工智慧工作負載與敏感資料處理等應用情境。
+
+### Intel內部網站漏洞細節
+
+*   資安研究員Eaton Zveare揭露Intel內部網站存在多個漏洞，可能導致27萬員工資料外洩。
+*   漏洞包括Intel India Operations名片訂購網站未經身分驗證即可存取，Product Hierarchy網站寫死帳密可下載員工資料，以及繞過SEIMS Supplier Site登入介面。
+
+### Google Gemini for Government產品及OneGov合作協議
+
+*   Google推出Gemini for Government產品，並與美國總務管理局（GSA）簽署OneGov合作協議。
+*   美國聯邦機構可以每年0.47美元的價格訂閱Gemini for Government，有效期限至2026年。
+*   OneGov旨在統一聯邦政府機構的採購模式，以市售產品及服務取代客製化服務。
+
+### TRM Labs推出Beacon Network加密貨幣犯罪應對網路
+
+*   TRM Labs推出Beacon Network，串連執法機構、加密貨幣交易平臺、支付公司及資安研究人員。
+*   Beacon Network旨在建立即時預警網絡，在非法資金被套現或轉為法幣之前攔截。
+*   創始成員包括Coinbase、Binance、PayPal、Robinhood、Stripe、Kraken、Ripple、Crypto.com等數十家業者。
+
+### 各大零售業巨頭GenAI應用
+
+*   **Walmart：** 採用適應式零售戰略，利用GenAI強化顧客體驗、供應鏈管理、生產力，加速數據處理和IT開發。
+*   **Amazon：** 廣泛將GenAI應用於物流、顧客體驗、賣家體驗與RMN，並推出AI購物助理Rufus、AI交通指揮官Deepfleet等創新應用。
+*   **Target：** 遵循由內而外的模式，先從內部資料整理，再應用於員工，最後才推出面向顧客的系統，例如GenAI店員助手Store Companion和購物助手Shopping Assistant。
+*   **eBay：** 利用GenAI打造新的商品探索體驗Shop the Look，強化商品上架技術，應用於顧客體驗、RMN廣告等領域。
+*   **Lowe's：** 推出Mylow生成式AI購物助理，提供家居領域的專業知識輔助，幫助顧客解決問題或完成特定作業，並提升員工AI素養。
+
+### Anthropic 推出企業及團隊方案更新
+
+*   Anthropic 為企業及團隊方案新增 Premium 授權名額，允許在同一訂閱中使用 Claude 和 Claude Code。
+*   推出 Compliance API，協助企業即時監管使用狀況並滿足法遵需求。
+*   強化使用分析，讓管理者掌握 Claude Code 的實際成效。
+*   管理員可統一配置工具權限、檔案存取限制等。

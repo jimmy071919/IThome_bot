@@ -41,19 +41,7 @@ def is_quota_exceeded(error_message):
         return True
     return False
 
-def save_to_backup_file(message_type, content):
-    """ 當 LINE API 配額用盡時，將訊息保存到備份文件 """
-    backup_dir = "backup_messages"
-    os.makedirs(backup_dir, exist_ok=True)
-    
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"{backup_dir}/{message_type}_{timestamp}.json"
-    
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(content, f, ensure_ascii=False, indent=2)
-    
-    logging.info(f"訊息已保存到備份文件: {filename}")
-    return filename
+
 
 def send_message(message, retry_count=3, retry_delay=1):
     """ 發送 LINE 文字訊息，包含重試機制和配額檢測 """
@@ -90,12 +78,7 @@ def send_message(message, retry_count=3, retry_delay=1):
                     time.sleep(retry_delay)
                 else:
                     logging.error(f"發送訊息最終失敗: {e}")
-        
-        # 如果配額用盡，保存到備份文件
-        if quota_exceeded:
-            backup_content = {"type": "text", "text": message}
-            save_to_backup_file("text", backup_content)
-            return False
+    
             
         return False
 
@@ -137,12 +120,6 @@ def send_flex_message(alt_text, contents, retry_count=3, retry_delay=1):
                     time.sleep(retry_delay)
                 else:
                     logging.error(f"發送 Flex 訊息最終失敗: {e}")
-        
-        # 如果配額用盡，保存到備份文件
-        if quota_exceeded:
-            backup_content = {"type": "flex", "alt_text": alt_text, "contents": contents}
-            save_to_backup_file("flex", backup_content)
-            return False
             
         return False
 
@@ -197,12 +174,7 @@ def send_batch_messages(messages, batch_size=5, delay_between_batches=1, retry_c
             # 批次之間添加延遲
             if remaining_messages and not quota_exceeded:
                 time.sleep(delay_between_batches)
-        elif quota_exceeded:
-            # 如果配額用盡，保存剩餘訊息到備份文件
-            backup_content = {"type": "batch_text", "messages": remaining_messages}
-            save_to_backup_file("batch_text", backup_content)
-            success = False
-            break
+        
         else:
             # 其他錯誤導致發送失敗
             logging.error(f"批次發送訊息最終失敗")
@@ -305,9 +277,6 @@ def check_quota_status():
         if is_quota_exceeded(error_str):
             logging.error("LINE API 配額已用盡")
             return False  # 配額用盡
-        else:
-            logging.warning(f"配額檢查時發生其他錯誤: {e}")
-            return None  # 其他錯誤
 
 def send_IT_message():
     """ 爬取 IThome 新聞並發送到 LINE，使用優化的方式減少 API 呼叫 """
@@ -321,10 +290,6 @@ def send_IT_message():
         quota_status = check_quota_status()
         if quota_status is not False:  # 配額正常或未知狀態
             send_message("上午好! 今天沒有新文章🐶")
-        else:  # 配額用盡
-            backup_content = {"type": "text", "text": "上午好! 今天沒有新文章🐶"}
-            save_to_backup_file("text", backup_content)
-        logging.info("今天沒有新文章")
         
         # 即使沒有新文章，也嘗試生成摘要並寫入 Notion
         summary = gen_summary()
@@ -347,13 +312,11 @@ def send_IT_message():
         flex_contents = create_news_flex_message(news_list)
         if flex_contents:
             backup_content = {"type": "flex", "alt_text": f"今日 iThome 最新{len(news_list)}則新聞", "contents": flex_contents}
-            save_to_backup_file("flex", backup_content)
         
         # 保存摘要
         summary = gen_summary()
         if summary:
             backup_content = {"type": "text", "text": f"📜 今日摘要：\n{summary}"}
-            save_to_backup_file("summary", backup_content)
             
         
         logging.info("所有訊息已保存到備份文件")
@@ -380,13 +343,6 @@ def send_IT_message():
 
     # 檢查配額狀態（可能在發送新聞過程中已用盡）
     quota_status = check_quota_status()
-    if quota_status is False:  # 配額用盡
-        logging.warning("LINE API 配額已用盡，摘要將保存到備份文件")
-        summary = gen_summary()
-        if summary:
-            backup_content = {"type": "text", "text": f"📜 今日摘要：\n{summary}"}
-            save_to_backup_file("summary", backup_content)
-        return
     
     # 讀取 content.txt 並發送摘要
     summary = gen_summary()
@@ -413,7 +369,7 @@ def send_IT_message():
 program_scheduler = BackgroundScheduler(timezone=pytz.timezone('Asia/Taipei'))
 
 # 設定排程時間（每天早上 8 點執行）
-program_trigger = CronTrigger(hour=8, minute=0, timezone=pytz.timezone('Asia/Taipei'))
+program_trigger = CronTrigger(hour=12, minute=33, timezone=pytz.timezone('Asia/Taipei'))
 program_scheduler.add_job(send_IT_message, trigger=program_trigger)
 
 # 啟動排程
