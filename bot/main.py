@@ -369,7 +369,7 @@ def send_IT_message():
 program_scheduler = BackgroundScheduler(timezone=pytz.timezone('Asia/Taipei'))
 
 # 設定排程時間（每天早上 8 點執行）
-program_trigger = CronTrigger(hour=12, minute=33, timezone=pytz.timezone('Asia/Taipei'))
+program_trigger = CronTrigger(hour=8, minute=00, timezone=pytz.timezone('Asia/Taipei'))
 program_scheduler.add_job(send_IT_message, trigger=program_trigger)
 
 # 啟動排程
