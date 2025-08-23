@@ -1,6 +1,5 @@
 import google.generativeai as genai
 import os
-import notion_use
 from dotenv import load_dotenv
 
 # 載入環境變數

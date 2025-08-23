@@ -1,8 +1,9 @@
 import os
-import requests
-import pytz
 import json
 import datetime
+import time
+import logging
+import pytz
 from dotenv import load_dotenv
 from linebot.v3.messaging import (
     ApiClient, Configuration, MessagingApi, 
@@ -10,11 +11,9 @@ from linebot.v3.messaging import (
     FlexContainer
 )
 from crawler import IThome_crawler, get_article_content
+from gemini_test import gen_summary
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from gemini_test import gen_summary  # 確保 gemini_test.py 在可導入的路徑內
-import time
-import logging
 
 # 設定日誌
 logging.basicConfig(
@@ -296,10 +295,8 @@ def check_quota_status():
         configuration = Configuration(access_token=LINE_ACCESS_TOKEN)
         with ApiClient(configuration) as api_client:
             api_instance = MessagingApi(api_client)
-            test_message = TextMessage(text="配額測試訊息 - 請忽略")
             push_message_request = PushMessageRequest(
                 to=LINE_USER_ID,
-                messages=[test_message]
             )
             api_instance.push_message(push_message_request)
             return True  # 配額正常
@@ -328,6 +325,15 @@ def send_IT_message():
             backup_content = {"type": "text", "text": "上午好! 今天沒有新文章🐶"}
             save_to_backup_file("text", backup_content)
         logging.info("今天沒有新文章")
+        
+        # 即使沒有新文章，也嘗試生成摘要並寫入 Notion
+        summary = gen_summary()
+        if summary:
+            logging.info("雖然沒有新文章，但已生成摘要")
+            
+        else:
+            logging.warning("無法生成摘要")
+        
         return
     
     logging.info(f"找到 {len(news_list)} 則新文章")
@@ -348,6 +354,7 @@ def send_IT_message():
         if summary:
             backup_content = {"type": "text", "text": f"📜 今日摘要：\n{summary}"}
             save_to_backup_file("summary", backup_content)
+            
         
         logging.info("所有訊息已保存到備份文件")
         return
@@ -397,19 +404,32 @@ def send_IT_message():
         else:
             send_message(f"📜 今日摘要：\n{summary}")
         logging.info(f"摘要發送完畢，長度: {len(summary)}字")
+        
     else:
         logging.warning("無法生成摘要")
 
 
-# # 建立 BackgroundScheduler 以不阻塞主程式
-# program_scheduler = BackgroundScheduler(timezone=pytz.timezone('Asia/Taipei'))
+# 建立 BackgroundScheduler 以不阻塞主程式
+program_scheduler = BackgroundScheduler(timezone=pytz.timezone('Asia/Taipei'))
 
-# # 設定排程時間（每天早上 9 點執行）
-# program_trigger = CronTrigger(hour=9, minute=0, timezone=pytz.timezone('Asia/Taipei'))
-# program_scheduler.add_job(send_IT_message, trigger=program_trigger)
+# 設定排程時間（每天早上 8 點執行）
+program_trigger = CronTrigger(hour=8, minute=0, timezone=pytz.timezone('Asia/Taipei'))
+program_scheduler.add_job(send_IT_message, trigger=program_trigger)
 
-# # 啟動排程
-# program_scheduler.start()
+# 啟動排程
+program_scheduler.start()
+logging.info("排程已啟動，將在每天早上 8:00 執行 IThome 新聞爬取")
 
 if __name__ == "__main__":
-    send_IT_message()
+    # 立即執行一次（用於測試）
+    # send_IT_message()
+    
+    # 保持程式運行，等待排程觸發
+    try:
+        logging.info("程式正在運行中，按 Ctrl+C 停止...")
+        while True:
+            time.sleep(60)  # 每分鐘檢查一次
+    except KeyboardInterrupt:
+        logging.info("接收到停止信號，正在關閉排程...")
+        program_scheduler.shutdown()
+        logging.info("程式已停止")
