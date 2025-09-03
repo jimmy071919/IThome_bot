@@ -1,2 +1,21 @@
+# 忽略敏感的環境變數檔案
 .env
-/venv
+
+# 忽略 Python 虛擬環境資料夾
+/venv/
+/.venv/
+/env/
+
+# 忽略所有日誌檔
+*.log
+
+# 忽略 Python 編譯和快取檔案 (非常推薦加入)
+__pycache__/
+*.pyc
+
+# 如果你有特定的 TXT 檔案需要忽略
+*.txt
+
+# 建議保留 README.md 等重要的 Markdown 檔案
+# 如果有私人筆記檔，可以單獨指定
+*.md
