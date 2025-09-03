@@ -1,0 +1,31 @@
+# Docker Compose 配置文件
+version: '3.8'
+
+services:
+  ithome-bot:
+    build: .
+    container_name: ithome-bot
+    restart: unless-stopped
+    environment:
+      - LINE_ACCESS_TOKEN=${LINE_ACCESS_TOKEN}
+      - LINE_USER_ID=${LINE_USER_ID}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      # 掛載數據目錄以保持數據持久性
+      - ./data:/app/data
+      - ./content_history.md:/app/content_history.md
+      - ./crawler_history.txt:/app/crawler_history.txt
+      - ./content.txt:/app/content.txt
+      - ./logs:/app/logs
+    networks:
+      - ithome-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  ithome-network:
+    driver: bridge
