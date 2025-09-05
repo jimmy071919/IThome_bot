@@ -1,6 +1,4 @@
 # Docker Compose 配置文件
-version: '3.8'
-
 services:
   ithome-bot:
     build: .
@@ -10,6 +8,9 @@ services:
       - LINE_ACCESS_TOKEN=${LINE_ACCESS_TOKEN}
       - LINE_USER_ID=${LINE_USER_ID}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - NOTION_TOKEN=${NOTION_TOKEN}
+      - DATABASE_ID=${DATABASE_ID}
+      - TZ=Asia/Taipei
     volumes:
       # 掛載數據目錄以保持數據持久性
       - ./data:/app/data

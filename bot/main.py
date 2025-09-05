@@ -12,6 +12,7 @@ from linebot.v3.messaging import (
 )
 from crawler import IThome_crawler, get_article_content
 from gemini_test import gen_summary
+from notion import create_rich_content_page, test_notion_connection
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
@@ -296,6 +297,15 @@ def send_IT_message():
         if summary:
             logging.info("雖然沒有新文章，但已生成摘要")
             
+            # 寫入 Notion
+            today = datetime.datetime.now().strftime("%Y-%m-%d")
+            title = f"IThome 每日摘要 - {today} (無新文章)"
+            try:
+                create_rich_content_page(title, today, summary, [])
+                logging.info("摘要已成功寫入 Notion")
+            except Exception as e:
+                logging.error(f"寫入 Notion 失敗: {e}")
+            
         else:
             logging.warning("無法生成摘要")
         
@@ -318,6 +328,14 @@ def send_IT_message():
         if summary:
             backup_content = {"type": "text", "text": f"📜 今日摘要：\n{summary}"}
             
+            # 即使 LINE API 配額用盡，仍嘗試寫入 Notion
+            today = datetime.datetime.now().strftime("%Y-%m-%d")
+            title = f"IThome 每日摘要 - {today} (LINE配額用盡)"
+            try:
+                create_rich_content_page(title, today, summary, news_list)
+                logging.info("雖然 LINE API 配額用盡，但摘要已成功寫入 Notion")
+            except Exception as e:
+                logging.error(f"寫入 Notion 失敗: {e}")
         
         logging.info("所有訊息已保存到備份文件")
         return
@@ -361,6 +379,15 @@ def send_IT_message():
             send_message(f"📜 今日摘要：\n{summary}")
         logging.info(f"摘要發送完畢，長度: {len(summary)}字")
         
+        # 寫入 Notion
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        title = f"IThome 每日摘要 - {today}"
+        try:
+            create_rich_content_page(title, today, summary, news_list)
+            logging.info("摘要已成功寫入 Notion")
+        except Exception as e:
+            logging.error(f"寫入 Notion 失敗: {e}")
+        
     else:
         logging.warning("無法生成摘要")
 
@@ -368,17 +395,30 @@ def send_IT_message():
 # 建立 BackgroundScheduler 以不阻塞主程式
 program_scheduler = BackgroundScheduler(timezone=pytz.timezone('Asia/Taipei'))
 
-# 設定排程時間（每天早上 8 點執行）
-program_trigger = CronTrigger(hour=8, minute=00, timezone=pytz.timezone('Asia/Taipei'))
-program_scheduler.add_job(send_IT_message, trigger=program_trigger)
+# 設定多個排程時間（每天早上 8:00、下午 14:00 和晚上 20:00 執行）
+morning_trigger = CronTrigger(hour=8, minute=0, timezone=pytz.timezone('Asia/Taipei'))
+afternoon_trigger = CronTrigger(hour=14, minute=0, timezone=pytz.timezone('Asia/Taipei'))
+evening_trigger = CronTrigger(hour=20, minute=0, timezone=pytz.timezone('Asia/Taipei'))
+
+# 添加三個排程任務
+program_scheduler.add_job(send_IT_message, trigger=morning_trigger, id='morning_job')
+program_scheduler.add_job(send_IT_message, trigger=afternoon_trigger, id='afternoon_job')
+program_scheduler.add_job(send_IT_message, trigger=evening_trigger, id='evening_job')
 
 # 啟動排程
 program_scheduler.start()
-logging.info("排程已啟動，將在每天早上 8:00 執行 IThome 新聞爬取")
+logging.info("排程已啟動，將在每天 8:00、14:00 和 20:00 執行 IThome 新聞爬取")
+
+# 測試 Notion 連線
+logging.info("測試 Notion 連線...")
+if test_notion_connection():
+    logging.info("Notion 連線成功！")
+else:
+    logging.warning("Notion 連線失敗，請檢查設定")
 
 if __name__ == "__main__":
     # 立即執行一次（用於測試）
-    # send_IT_message()
+    # send_IT_message()  # 取消註解以測試功能
     
     # 保持程式運行，等待排程觸發
     try:
