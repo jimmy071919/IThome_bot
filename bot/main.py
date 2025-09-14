@@ -298,7 +298,7 @@ def send_IT_message():
             logging.info("雖然沒有新文章，但已生成摘要")
             
             # 寫入 Notion
-            today = datetime.datetime.now().strftime("%Y-%m-%d")
+            today = datetime.datetime.now().strftime("%Y-%m-%d-%H%M")
             title = f"IThome 每日摘要 - {today} (無新文章)"
             try:
                 create_rich_content_page(title, today, summary, [])
