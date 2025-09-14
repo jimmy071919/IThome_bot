@@ -283,8 +283,8 @@ def test_notion_connection():
 
 
 if __name__ == "__main__":
-        
-    today = datetime.now().strftime("%Y-%m-%d")
+
+    today = datetime.now().strftime("%Y-%m-%d-%H%M")
 
     test_news = IThome_crawler()
 
